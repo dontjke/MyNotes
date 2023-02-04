@@ -11,6 +11,7 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.mynotes.R;
@@ -59,6 +60,13 @@ public class NoteFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Bundle arguments = getArguments();
+
+        Button buttonBack = view.findViewById(R.id.back_button);
+        if (buttonBack != null)
+            buttonBack.setOnClickListener(view1 ->
+                    requireActivity()
+                            .getSupportFragmentManager()
+                            .popBackStack());
         if (arguments != null) {
             //int index = arguments.getInt(ARG_INDEX);
             note = arguments.getParcelable(SELECTED_NOTE);

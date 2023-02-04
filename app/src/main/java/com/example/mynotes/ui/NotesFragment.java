@@ -21,15 +21,13 @@ import com.example.mynotes.domain.Note;
 
 public class NotesFragment extends Fragment {
 
-
     static final String SELECTED_INDEX = "index";
     static final String SELECTED_NOTE = "note";
     int selectedIndex = 0;
     private Note note;
-
-    public NotesFragment(){
-
+    public NotesFragment() {
     }
+
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         outState.putParcelable(SELECTED_NOTE, note);
@@ -62,7 +60,6 @@ public class NotesFragment extends Fragment {
         if (isLandscape()) {
             showLandNoteDetails(note);
         }
-
     }
 
     private boolean isLandscape() {
