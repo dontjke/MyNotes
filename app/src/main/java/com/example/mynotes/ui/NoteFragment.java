@@ -14,7 +14,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.mynotes.R;
-import com.example.mynotes.data.NotesRepository;
+import com.example.mynotes.domain.Note;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -24,15 +24,19 @@ import com.example.mynotes.data.NotesRepository;
 public class NoteFragment extends Fragment {
 
     static final String ARG_INDEX = "index";
+    static final String SELECTED_NOTE = "note";
+    private Note note;
 
-    // Фабричный метод создания фрагмента
-    // Фрагменты рекомендуется создавать через фабричные методы
-    public static NoteFragment newInstance(int index) {
+    public NoteFragment() {
+
+    }
+
+    public static NoteFragment newInstance(Note note) {
         // Создание фрагмента
         NoteFragment fragment = new NoteFragment();
         // Передача параметра через бандл
         Bundle args = new Bundle();
-        args.putInt(ARG_INDEX, index);
+        args.putParcelable(SELECTED_NOTE, note);
         fragment.setArguments(args);
         return fragment;
     }
@@ -52,37 +56,35 @@ public class NoteFragment extends Fragment {
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle
-            savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Bundle arguments = getArguments();
-        // Аргументы могут быть null (как в случае с методом Activity getIntent())
-        // поэтому обязательно проверяем на null
         if (arguments != null) {
-            int index = arguments.getInt(ARG_INDEX);
-            // найдем в root view нужный TextView
-
-            TextView textViewTitle = view.findViewById(R.id.text_view_title);
-            textViewTitle.setText(NotesRepository.getInstance().getNotes()[index].getTitle());
+            //int index = arguments.getInt(ARG_INDEX);
+            note = arguments.getParcelable(SELECTED_NOTE);
+            TextView textViewTitle = view.findViewById(R.id.title_text_view);
+            if (note == null) return;
+            textViewTitle.setText(note.getTitle());
             textViewTitle.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
                 }
-
                 @Override
                 public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                    NotesRepository.getInstance().getNotes()[index].setTitle(charSequence.toString());
+                    note.setTitle(charSequence.toString());
                 }
-
                 @Override
                 public void afterTextChanged(Editable editable) {
-
                 }
             });
-            TextView textViewDescription = view.findViewById(R.id.text_view_description);
-            textViewDescription.setText(NotesRepository.getInstance().getNotes()[index].getDescription());
-
+            TextView textViewDescription = view.findViewById(R.id.description_text_view);
+            textViewDescription.setText(note.getDescription());
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putParcelable(SELECTED_NOTE, note);
+        super.onSaveInstanceState(outState);
     }
 }
