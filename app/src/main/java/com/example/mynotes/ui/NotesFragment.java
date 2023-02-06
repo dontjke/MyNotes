@@ -69,13 +69,13 @@ public class NotesFragment extends Fragment {
     private void initNotes(View view) {
         LinearLayout linearLayout = (LinearLayout) view;
         // В этом цикле создаём элемент TextView, заполняем его значениями,и добавляем на экран.
-        for (int i = 0; i < Note.getNotes().length; i++) {
+        for (int i = 0; i < Note.getNotes().size(); i++) {
             TextView textView = new TextView(getContext());
-            textView.setText(Note.getNotes()[i].getTitle());
+            textView.setText(Note.getNotes().get(i).getTitle());
             textView.setTextSize(24);
             linearLayout.addView(textView);
             final int index = i;
-            textView.setOnClickListener(view1 -> showNoteDetails(Note.getNotes()[index]));
+            textView.setOnClickListener(view1 -> showNoteDetails(Note.getNotes().get(index)));
         }
     }
 
