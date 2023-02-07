@@ -16,18 +16,21 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.mynotes.R;
-import com.example.mynotes.data.NotesRepository;
+import com.example.mynotes.domain.Note;
 
 
 public class NotesFragment extends Fragment {
 
-
     static final String SELECTED_INDEX = "index";
+    static final String SELECTED_NOTE = "note";
     int selectedIndex = 0;
+    private Note note;
+    public NotesFragment() {
+    }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
-        outState.putInt(SELECTED_INDEX, selectedIndex);
+        outState.putParcelable(SELECTED_NOTE, note);
         super.onSaveInstanceState(outState);
     }
 
@@ -37,7 +40,6 @@ public class NotesFragment extends Fragment {
 
     }
 
-    // При создании фрагмента укажем его макет
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -45,19 +47,18 @@ public class NotesFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_notes, container, false);
     }
 
-    // Этот метод вызывается, когда макет экрана создан и готов к отображению информации. Создаем список с заметками.
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         if (savedInstanceState != null) {
-            selectedIndex = savedInstanceState.getInt(SELECTED_INDEX, 0);
+            // selectedIndex = savedInstanceState.getInt(SELECTED_INDEX, 0);
+            note = savedInstanceState.getParcelable(SELECTED_NOTE);
         }
         //инициализируем список с заметками
         initNotes(view.findViewById(R.id.data_container));
-
         if (isLandscape()) {
-            showLandNoteDetails(selectedIndex);
+            showLandNoteDetails(note);
         }
     }
 
@@ -65,33 +66,31 @@ public class NotesFragment extends Fragment {
         return getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
     }
 
-
     private void initNotes(View view) {
         LinearLayout linearLayout = (LinearLayout) view;
         // В этом цикле создаём элемент TextView, заполняем его значениями,и добавляем на экран.
-        for (int i = 0; i < NotesRepository.getInstance().getNotes().length; i++) {
+        for (int i = 0; i < Note.getNotes().length; i++) {
             TextView textView = new TextView(getContext());
-            textView.setText(NotesRepository.getInstance().getNotes()[i].getTitle());
+            textView.setText(Note.getNotes()[i].getTitle());
             textView.setTextSize(24);
             linearLayout.addView(textView);
-
             final int index = i;
-            textView.setOnClickListener(view1 -> showNoteDetails(index));
+            textView.setOnClickListener(view1 -> showNoteDetails(Note.getNotes()[index]));
         }
     }
 
-    //определяем в какой ориентации находится смартфон
-    private void showNoteDetails(int index) {
-        selectedIndex = index;
+    private void showNoteDetails(Note note) {
+        //selectedIndex = index;
+        this.note = note;
         if (isLandscape()) {
-            showLandNoteDetails(index);
+            showLandNoteDetails(note);
         } else {
-            showPortNoteDetails(index);
+            showPortNoteDetails(note);
         }
     }
 
-    private void showPortNoteDetails(int index) {
-        NoteFragment noteFragment = NoteFragment.newInstance(index);
+    private void showPortNoteDetails(Note note) {
+        NoteFragment noteFragment = NoteFragment.newInstance(note);
         FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
         FragmentTransaction fragmentTransaction =
                 fragmentManager.beginTransaction();
@@ -102,13 +101,15 @@ public class NotesFragment extends Fragment {
         fragmentTransaction.commit();
     }
 
-    private void showLandNoteDetails(int index) {
-        NoteFragment noteFragment = NoteFragment.newInstance(index);
+    private void showLandNoteDetails(Note note) {
+        NoteFragment noteFragment = NoteFragment.newInstance(note);
         FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         // добавляем фрагмент через add
         fragmentTransaction.replace(R.id.note_container, noteFragment);//замена фрагмента и без добавления в бэкстэк
         fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE); //анимация
         fragmentTransaction.commit();
+
     }
+
 }
