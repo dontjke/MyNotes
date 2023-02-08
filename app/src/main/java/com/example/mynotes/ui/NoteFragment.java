@@ -17,7 +17,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.mynotes.R;
 import com.example.mynotes.domain.Note;
@@ -82,7 +81,6 @@ public class NoteFragment extends Fragment {
             if (!isLandscape()) {
                 requireActivity().getSupportFragmentManager().popBackStack();
             }
-            Toast.makeText(getContext(),"Заметка удалена",Toast.LENGTH_SHORT).show();
             return true;
         }
         return super.onOptionsItemSelected(item);
