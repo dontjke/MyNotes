@@ -1,8 +1,6 @@
 package com.example.mynotes.ui;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.os.Bundle;
 
@@ -101,30 +99,14 @@ public class NoteFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.delete_action) {
-
-            new AlertDialog.Builder(getContext())
-                    .setTitle("Внимание")
-                    .setMessage("Вы действительно хотите удалить заметку?")
-                    .setPositiveButton("Да", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            Note.getNotes().remove(note);
-                            note = null;
-                            updateData();
-                            if (!isLandscape()) {
-                                requireActivity().getSupportFragmentManager().popBackStack();
-                            }
-                            deleteToast.show();
-                        }
-                    })
-                    .setNegativeButton("Нет", null)
-                    .show();
-
-
+            Note.getNotes().remove(note);
+            note = null;
+            updateData();
+            if (!isLandscape()) {
+                requireActivity().getSupportFragmentManager().popBackStack();
+            }
             //Toast.makeText(getContext(), "Заметка удалена", Toast.LENGTH_SHORT).show();
-            //deleteToast.show();
-
-
+            deleteToast.show();
             return true;
         }
         return super.onOptionsItemSelected(item);

@@ -91,7 +91,7 @@ public class NotesFragment extends Fragment {
             textView.setTextSize(24);
             linearLayout.addView(textView);
             final int index = i;
-            initPopupMenu(view, textView, index);
+            initPopupMenu(view,textView,index);
             textView.setOnClickListener(view1 -> showNoteDetails(Note.getNotes().get(index)));
         }
     }
@@ -105,8 +105,8 @@ public class NotesFragment extends Fragment {
                         switch (menuItem.getItemId()) {
                             case R.id.delete_action_popup:
                                 Note.getNotes().remove(index);
-                                ((LinearLayout) rootView).removeView(view);
-                                Snackbar.make(rootView, "Заметка удалена", Snackbar.LENGTH_LONG).show();
+                                ((LinearLayout)rootView).removeView(view);
+                                Snackbar.make(rootView, "Заметка удалена",Snackbar.LENGTH_LONG).show();
                                 return true;
                         }
                         return true;
