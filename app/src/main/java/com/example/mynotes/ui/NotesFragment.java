@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import com.example.mynotes.R;
 import com.example.mynotes.domain.Note;
+import com.google.android.material.snackbar.Snackbar;
 
 
 public class NotesFragment extends Fragment {
@@ -105,6 +106,7 @@ public class NotesFragment extends Fragment {
                             case R.id.delete_action_popup:
                                 Note.getNotes().remove(index);
                                 ((LinearLayout)rootView).removeView(view);
+                                Snackbar.make(rootView, "Заметка удалена",Snackbar.LENGTH_LONG).show();
                                 return true;
                         }
                         return true;
