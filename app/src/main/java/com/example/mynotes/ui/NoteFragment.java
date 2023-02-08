@@ -1,6 +1,5 @@
 package com.example.mynotes.ui;
 
-import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
 
@@ -10,7 +9,6 @@ import androidx.fragment.app.Fragment;
 
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -18,7 +16,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,8 +32,6 @@ public class NoteFragment extends Fragment {
     static final String ARG_INDEX = "index";
     static final String SELECTED_NOTE = "note";
     private Note note;
-    private Toast deleteToast;
-
 
     public NoteFragment() {
 
@@ -78,24 +73,6 @@ public class NoteFragment extends Fragment {
         }
     }
 
-    private Toast prepareCustomToast(View view) {
-        LayoutInflater inflater = getLayoutInflater();
-        View layout = inflater.inflate(R.layout.my_toast_layout,
-                (ViewGroup) view.findViewById(R.id.toast_layout_root));
-
-        ImageView imageView = layout.findViewById(R.id.toast_image_view);
-        imageView.setImageResource(android.R.drawable.ic_input_delete);
-
-        TextView textView = layout.findViewById(R.id.toast_text_view);
-        textView.setText("Заметка удалена!");
-
-        Toast toast = new Toast(getContext());
-        toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
-        toast.setDuration(Toast.LENGTH_LONG);
-        toast.setView(layout);
-        return toast;
-    }
-
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.delete_action) {
@@ -105,8 +82,7 @@ public class NoteFragment extends Fragment {
             if (!isLandscape()) {
                 requireActivity().getSupportFragmentManager().popBackStack();
             }
-            //Toast.makeText(getContext(), "Заметка удалена", Toast.LENGTH_SHORT).show();
-            deleteToast.show();
+            Toast.makeText(getContext(),"Заметка удалена",Toast.LENGTH_SHORT).show();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -125,8 +101,6 @@ public class NoteFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Bundle arguments = getArguments();
-
-        deleteToast = prepareCustomToast(view);
 
         Button buttonBack = view.findViewById(R.id.back_button);
         if (buttonBack != null)
