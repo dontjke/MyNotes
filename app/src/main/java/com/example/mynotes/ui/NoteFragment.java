@@ -1,5 +1,6 @@
 package com.example.mynotes.ui;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -9,6 +10,9 @@ import androidx.fragment.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -52,8 +56,43 @@ public class NoteFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+        setHasOptionsMenu(true);
         return inflater.inflate(R.layout.fragment_note, container, false);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.note_menu, menu);
+
+
+        //Меню от Активити
+        MenuItem menuItemAbout = menu.findItem(R.id.about_action);
+        if (menuItemAbout != null) {
+            menuItemAbout.setVisible(false);
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.delete_action) {
+            Note.getNotes().remove(note);
+            note = null;
+            updateData();
+            if (!isLandscape()) {
+                requireActivity().getSupportFragmentManager().popBackStack();
+            }
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void updateData() {
+        for (Fragment fragment : requireActivity().getSupportFragmentManager().getFragments()) {
+            if (fragment instanceof NotesFragment) {
+                ((NotesFragment) fragment).initNotes();
+                break;
+            }
+        }
     }
 
     @Override
@@ -77,10 +116,12 @@ public class NoteFragment extends Fragment {
                 @Override
                 public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 }
+
                 @Override
                 public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                     note.setTitle(charSequence.toString());
                 }
+
                 @Override
                 public void afterTextChanged(Editable editable) {
                 }
@@ -94,5 +135,9 @@ public class NoteFragment extends Fragment {
     public void onSaveInstanceState(@NonNull Bundle outState) {
         outState.putParcelable(SELECTED_NOTE, note);
         super.onSaveInstanceState(outState);
+    }
+
+    private boolean isLandscape() {
+        return getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
     }
 }

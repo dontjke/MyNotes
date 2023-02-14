@@ -1,5 +1,6 @@
 package com.example.mynotes.ui;
 
+import android.app.Activity;
 import android.content.res.Configuration;
 import android.os.Bundle;
 
@@ -10,9 +11,11 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.example.mynotes.R;
@@ -24,12 +27,17 @@ public class NotesFragment extends Fragment {
     static final String SELECTED_INDEX = "index";
     static final String SELECTED_NOTE = "note";
     int selectedIndex = 0;
+    View dataContainer;
     private Note note;
+
     public NotesFragment() {
     }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
+
+        if (note == null)
+            note = Note.getNotes().get(0);
         outState.putParcelable(SELECTED_NOTE, note);
         super.onSaveInstanceState(outState);
     }
@@ -55,6 +63,8 @@ public class NotesFragment extends Fragment {
             // selectedIndex = savedInstanceState.getInt(SELECTED_INDEX, 0);
             note = savedInstanceState.getParcelable(SELECTED_NOTE);
         }
+
+        dataContainer = view.findViewById(R.id.data_container);
         //инициализируем список с заметками
         initNotes(view.findViewById(R.id.data_container));
         if (isLandscape()) {
@@ -66,17 +76,43 @@ public class NotesFragment extends Fragment {
         return getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
     }
 
+    public void initNotes() {
+        initNotes(dataContainer);
+    }
+
     private void initNotes(View view) {
         LinearLayout linearLayout = (LinearLayout) view;
+        linearLayout.removeAllViews();
         // В этом цикле создаём элемент TextView, заполняем его значениями,и добавляем на экран.
-        for (int i = 0; i < Note.getNotes().length; i++) {
+        for (int i = 0; i < Note.getNotes().size(); i++) {
             TextView textView = new TextView(getContext());
-            textView.setText(Note.getNotes()[i].getTitle());
+            textView.setText(Note.getNotes().get(i).getTitle());
             textView.setTextSize(24);
             linearLayout.addView(textView);
             final int index = i;
-            textView.setOnClickListener(view1 -> showNoteDetails(Note.getNotes()[index]));
+            initPopupMenu(view,textView,index);
+            textView.setOnClickListener(view1 -> showNoteDetails(Note.getNotes().get(index)));
         }
+    }
+
+    private void initPopupMenu(View rootView, TextView view, int index) {
+        view.setOnLongClickListener(view1 -> {
+            Activity activity = requireActivity();
+            PopupMenu popupMenu = new PopupMenu(activity, view1);
+            activity.getMenuInflater().inflate(R.menu.notes_popup_menu, popupMenu.getMenu());
+            popupMenu.setOnMenuItemClickListener(menuItem -> {
+                        switch (menuItem.getItemId()) {
+                            case R.id.delete_action_popup:
+                                Note.getNotes().remove(index);
+                                ((LinearLayout)rootView).removeView(view);
+                                return true;
+                        }
+                        return true;
+                    }
+            );
+            popupMenu.show();
+            return true;
+        });
     }
 
     private void showNoteDetails(Note note) {
