@@ -11,4 +11,5 @@
     <string name="png">Изображение</string>
     <string name="navigation_drawer_open">Открытие</string>
     <string name="navigation_drawer_close">Закрытие</string>
+    <string name="item">Item</string>
 </resources>
